@@ -26,10 +26,12 @@ You can also run the program straight from the command line with the following s
 Details for these arguments are as follows:
 
 **Required Arguments**:
+
   -n MOON_NAME, --moon_name MOON_NAME
                         Name of the moon whose metonic cycle you want to investigate. Use its most commonly referred name e.g Ganymede and not J3 or Jupiter III. Full list of supported moons can be found in satellites.json. Use 'Moon' for Earth's moon.
                         
 **Optional Arguments**(defaults will be substituted):
+
   -h, --help            show this help message and exit
   
   -d DATE, --date DATE  target date from which similar metonic dates will be calculated.
