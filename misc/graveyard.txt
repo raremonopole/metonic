@@ -1,23 +1,5 @@
 A graveyard of code that is not needed but could be helpful for future reference.
 
-#ACCESS HORIZONS API DIRECTLY AND USE REGEX
-# r = requests.get(main_url,params=parameters)
-# if r.status_code == 200:
-#     pass
-# else:
-#     print("An error with the API occurred.")
-
-# content = r.text
-# print(content)
-
-# match = re.search(r"(?i)orbital\s*period\s*(?:=)?\s*(?:~)?\s*[\d.]+\s*.", content)
-
-# if match:
-#     orbital_period_text = match.group(0)
-#     print(orbital_period_text)
-# else:
-#     print("Orbital period not found.")
-
         
 #READ CSVs
 # def return_moon_data(moon_name):
@@ -38,9 +20,8 @@ A graveyard of code that is not needed but could be helpful for future reference
 
 
 
-#Converting to planetary calendars--Future functionality, as if we define planetary year starts at perihelion dates, this will take time.
+#Converting to planetary calendars--Future functionality, as if we define planetary year starts at perihelion dates, implementation gets tricky.
 # if calendar != "Earth":
-#     for date in metonic_dates:
         
 #     # conversion = convert_planetary_calendars(date)
 
