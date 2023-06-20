@@ -6,8 +6,10 @@ The metonic cycle, the enneadecaeteris, or the lunisolar cycle are all names for
 This calculator extends these metonic cycle calculations to most moons and their respective planets within the solar system. Given a synchronization error in days, the program will attempt a decimal expansion to calculate a ratio of planetary years to synodic moon periods with a smaller error. With this newfound metonic cycle, dates where  the sun, moon, and planet share the same relative configuration within the solar system can be calculated.
 
 ## Installation instructions:
->git clone "https://github.com/arctangent4/metonic.git"
+>git clone https://github.com/arctangent4/metonic.git
+
 >cd metonic
+
 >pip install -r requirements.txt
 
 
