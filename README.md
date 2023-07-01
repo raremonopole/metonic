@@ -27,22 +27,22 @@ Details for these arguments are as follows:
 
 **Required Arguments**:
 
-  -n MOON_NAME, --moon_name MOON_NAME
+  -n MOON_NAME, --moon_name ~
                         Name of the moon whose metonic cycle you want to investigate. Use its most commonly referred name e.g. Ganymede and not J3 or Jupiter III. Full list of supported moons can be found in satellites.json. Use 'Moon' for Earth's moon.
                         
 **Optional Arguments**(defaults will be substituted):
 
-  -h, --help            show this help message and exit
+  -h, --help     ~       show this help message and exit
   
-  -d DATE, --date DATE  target date from which similar metonic dates will be calculated.
+  -d DATE, --date ~ target date from which similar metonic dates will be calculated.
   
-  -e ERROR, --error ERROR
+  -e ERROR, --error  ~
                          a decimal margin of error(in earth days) for the ratio between planet years and moon periods. This affects the type of cycle generated and its accuracy. For example, the Earth-Moon system has a 8 moon metonic cyle called Octaeteris, the more accurate and well known 19 year enneadecaeteris, and the even more accurate 76 year Callipic cycle. 
                         
-  -nd NUM_DATES, --num_dates NUM_DATES
+  -nd NUM_DATES, --num_dates ~
                         Inputted as [x,y] list. Give the x number of prior metonic dates and the y number of future metonic dates you need(program will return the x previous metonic dates and y next metonic dates relative to the target date).
                         
- -s SKIP, --skip SKIP  skips printed text and inputs
+ -s SKIP, --skip  ~ skips printed text and inputs
 
  ## Technical Details
 The program uses NASA's JPL Horizons API for ephemeris data for objects in the solar system.
