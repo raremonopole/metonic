@@ -37,7 +37,7 @@ Details for these arguments are as follows:
   -d DATE, --date ~ target date from which similar metonic dates will be calculated.
   
   -e ERROR, --error  ~
-                         a decimal margin of error(in earth days) for the ratio between planet years and moon periods. This affects the type of cycle generated and its accuracy. For example, the Earth-Moon system has a 8 moon metonic cyle called Octaeteris, the more accurate and well known 19 year enneadecaeteris, and the even more accurate 76 year Callipic cycle. 
+                         a decimal margin of error(in Earth days) for the ratio between planet years and moon periods. This affects the type of cycle generated and its accuracy. For example, the Earth-Moon system has many possible cycles: the 8 year metonic cyle called the octaeteris, the more accurate and well known 19 year enneadecaeteris, and the even more accurate 76 year Callipic cycle. 
                         
   -nd NUM_DATES, --num_dates ~
                         Inputted as [x,y] list. Give the x number of prior metonic dates and the y number of future metonic dates you need(program will return the x previous metonic dates and y next metonic dates relative to the target date).
