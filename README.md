@@ -1,7 +1,7 @@
 # **Metonic Cycle Calculator**
 
 ## Introduction
-The metonic cycle, the enneadecaeteris, and the lunisolar cycle are all names for a natural cycle between the Earth and its moon that repeats every 19 years. This synchronization cycle and variations of it can predict the Moon's phase far in the future, and many ancient astronomers and mathematicians throughout history have spent much effort deriving them. The most famous use case for the metonic cycle is for the Computus--the algorithm that calculates future Easter dates(as the holiday must occur after a full moon phase). 
+The metonic cycle, the enneadecaeteris, or the lunisolar cycle are all names for a natural cycle between the Earth and its moon that repeats every 19 years. This synchronization cycle and variations of it can predict the Moon's phase far in the future, and many ancient astronomers and mathematicians throughout history have spent much effort deriving them. The most famous use case for the metonic cycle is for the Computus--the algorithm that calculates future Easter dates(as the holiday must occur after a full moon phase). 
 
 This calculator extends these metonic cycle calculations to most moons and their respective planets within the solar system. Given a synchronization error in days, the program will attempt a decimal expansion to calculate a ratio of planetary years to synodic moon periods with a smaller error. With this newfound metonic cycle, dates where  the sun, moon, and planet share the same relative configuration within the solar system can be calculated.
 
