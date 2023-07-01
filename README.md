@@ -49,9 +49,9 @@ The program uses NASA's JPL Horizons API for ephemeris data for objects in the s
 It grabs the period of the target moon and carries out a decimal expansion to approximate the ratio between the moon and the planet's periods.
 Once an acceptable fraction approximation within error bounds is found, the program is able to construct a metonic cycle for the moon and planet.
 
-Then, program grabs data for a "S-T-O" parameter that is roughly similar to a phase angle that the sun, planet, and moon make with each other.
+Then, the program grabs data for a "S-T-O" parameter that is roughly similar to a phase angle that the sun, planet, and moon make with each other.
 The program then selects data near the peak of the phase curve(near 180 degrees) and performs a scipy interpolation to determine the "new moon time" of the moon.
-On tests with Earth's Moon, the program can determine the new moon time to within 7 minutes of accuracy.
+On tests with the Earth's Moon, the program can determine the new moon time to within 7 minutes of accuracy.
 In this way, the current moon phase on the target date and its repetitions in a metonic cycle can be determined.
 
 Lastly, the program calculates preceding and subsequent "metonic" dates using the metonic cycle.
