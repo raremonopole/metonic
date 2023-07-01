@@ -58,8 +58,13 @@ Lastly, the program calculates preceding and subsequent "metonic" dates using th
 These are essentially dates where the Sun, Planet, and Moon positions within the Solar System will roughly repeat.
 
 Program Structure:
+
 Run input.py
+
 input.py -> grab_data.py (Make API Call, determine planet, determine moon period)
+
 input.py -> metonic.py (Calculate Metonic Cycle)
+
 input.py -> phase_calcs.py (Determine new moon time and phase at target date)
+
 input.py does final calculations and returns results.
