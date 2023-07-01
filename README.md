@@ -13,7 +13,7 @@ This calculator extends these metonic cycle calculations to most moons and their
 >pip install -r requirements.txt
 
 
-Astroquery, requests, and numpy are the 3 external packages needed for the program. I do apologize for the large amounts of dependencies that astroquery requires.
+Astroquery, requests, and numpy are the 3 external packages needed for the program. I do apologize for the large number of dependencies that astroquery requires.
 
 ## Running the program
 You can run the program with just
