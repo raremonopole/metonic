@@ -1,6 +1,7 @@
 import datetime
 import numpy as np
 import math
+import itertools
 
 #FIND MOON PHASE
 def calculate_moon_phase(target_date, moon_period, new_moon_date):
@@ -18,14 +19,19 @@ def calculate_moon_phase(target_date, moon_period, new_moon_date):
     moon_period = moon_period*24*3600
     moon_phase_length = moon_period/8
     elapsed_time = (target_date - new_moon_date).total_seconds()
-    _,cycle_rem = divmod (elapsed_time, moon_period) 
-    phase_index = math.floor((cycle_rem/moon_phase_length))
+    #If elapsed time is negative, we can find the phase by taking advantage of the cylical nature of the phases and incrementing by a period.
+    #E.g. For Earth, the phase at 13 days from the next new moon is the same as one at -13 + 29.5 = 16.5 days after the next moon. 
+    if elapsed_time < 0:
+        elapsed_time = elapsed_time+moon_period
+
+    _ , cycle_rem = divmod (elapsed_time, moon_period) 
+    phase_index = math.floor((cycle_rem/moon_phase_length)) #Finds the 1/8th of the cycle the moon is in
     phase_name = moon_phases[phase_index]
 
     return phase_name
 
 
-#FIND NEW MOON TIME. WORK IN PROGRESS
+#FIND NEW MOON TIME. 
 def calc_phase_zero_point(times, angles):
     times = [datetime.datetime.strptime(time_str, '%Y-%b-%d %H:%M') for time_str in times]
     # angles = [float(angle) for angle in angles]
@@ -33,83 +39,77 @@ def calc_phase_zero_point(times, angles):
     times_length = len(times)
     angles_length = len(angles)
     if (times_length<5) or (times_length!=angles_length):
-        print("Raise exception")
+        raise Exception("Raise exception")
 
-    #Iteration to generate a list of angle changes
-    angle_changes = np.array([])
-    for i in range(times_length-1):
-        time_diff = times[i+1] - times[i]
-        time_diff = time_diff.total_seconds()
-        angle_diff = angles[i+1] - angles[i]
-        angle_changes = np.append(angle_changes, angle_diff/time_diff)    
+#By multiplying the median, we get a selection criteria for points near the top of the phase curve.
+    adj_angle_med = np.median(angles)*1.5
 
+    #Need to filter a collection of points to perform the interpolation.
+    #Ideally, we would like several points near the curve maximum to get a good polynomial.
+    for i in range(1,angles_length-2):
 
-    #Need to keep angle changes to assert change direction, so we assign absolute value to new variable
-    abs_changes = np.absolute(angle_changes)
-    average_change = np.average(abs_changes)
+        if angles[i] > adj_angle_med:
 
-     #We'll sample the third angle. This allows us to check the preceding and following angles for increasing/decreasing behavior.
-    initial_angle = angles[2]
-    change_direction = assert_phase_angle_change(angle_changes)
+            elems_thereafter = angles[i:] #Find all points after i that are larger than criterion
+            filtered_elems = list(itertools.takewhile(lambda x: x > adj_angle_med, elems_thereafter))
+            num_filtered = len(filtered_elems)
 
-    if change_direction=="positive":
-        seconds_from_new_moon = (180-initial_angle/average_change)
+            
+            if num_filtered < 2:
+                #When there is very few angle values near the minimum of the function, we need to at least include 1 point
+                #before our target angle, and at least a couple afterwards. This is why the for loop starts at index 1 and not 0.
+                start_index = i-1
+                stop_index = i+1
 
-    elif change_direction=="negative":
-        seconds_from_new_moon = -(initial_angle)/(average_change)
-        
+            else:
+
+                start_index = i
+                stop_index = i+num_filtered
  
+            break
+    
+    #Convert timestamps to numbers for interpolation
+    rel_time_coords = [(times[i]-times[0]).total_seconds() for i in range(times_length)]
 
-    new_moon_time = times[2]+datetime.timedelta(seconds=seconds_from_new_moon)
+#Selection of points to be interpolated on
+    interp_times = rel_time_coords[start_index:stop_index]
+    interp_angles = angles[start_index:stop_index]
+
+    from scipy.interpolate import InterpolatedUnivariateSpline
+    f = InterpolatedUnivariateSpline(interp_times, interp_angles, k=4)
+
+    #Subdivide interval for best accuracy in estimating the maximum
+    finer_times = []
+    for i in range(len(interp_times) - 1):
+        start_time = interp_times[i]
+        end_time = interp_times[i+1]
+        sub_interval = (end_time - start_time) / 50 
+
+    # Generate the additional time values within the subinterval
+        for j in range(50):
+            sub_time= start_time + (j * sub_interval)
+            finer_times.append(sub_time)
+    finer_times.append(interp_times[-1])
+
+    #Find time at which phase curve interpolation peaks
+    eval_vals= [f(i) for i in finer_times]
+    max_ind = np.argmax(eval_vals)
+    
+    # import matplotlib.pyplot as plt
+    #Interesting plots to look at phase angle shifts
+    # plt.plot(times, angles)
+    # plt.plot(times,[adj_angle_med for _ in times])
+    # plt.plot(times[start_index:stop_index],y_vals, color="green")
+    # plt.savefig("plots/a_vs_t.png")
+
+    #Remember, finer_times is derived from interp_times, which itself is measured as time points since times[0]
+    #Thus, we add interpolation time to times[0] to calculate the actual new moon timestamp
+
+    new_moon_time = times[0]+datetime.timedelta(seconds = finer_times[max_ind])
+
     return new_moon_time
 
 
-#If the phase angle is increasing, the moon is moving towards a full moon phase. If it is decreasing, the moon is moving towards a new moon phase.
-#This should work for both prograde and retrograde orbits. 
-#Interpolation code will be added in the future to account for the case where the moon
-#is near a new moon phase at the target_date; otherwise, the program may extrapolate in the wrong direction.
-#As long as step_size is no larger than 3h, this should be enough to extrapolate Metis's new moon time.
-
-#Taking products asserts signs of angle changes. Similar thing can be done with abs values e.g abs(a)+abs(b)==abs(a+b)
-def assert_phase_angle_change(angle_changes):
-    if (angle_changes[0] or angle_changes[1] or angle_changes[2])==0:
-        print("Sorry, there was an error evaluating the direction of phase angle changes. It's possible \
-        there is an error in the calculation between some of the times.")
-        raise
-
-    #If both angles are either both positive or both negative, their product will be positive.
-    if (angle_changes[0]*angle_changes[1])>0:
-        #If the triple product is +, angle_changes[2] must be +. So we have + + + or - - +
-        if (angle_changes[0]*angle_changes[1]*angle_changes[2])>0:
-
-            if angle_changes[1] >0:
-                #thus it must be +++, phase angle is strictly increasing when angles[2] was measured
-                 return "positive"
-            else:
-                #it's --+. Which implies the new moon occurs between angles[2] and angles[3]
-                return "negative"
-
-        #Ruling out --0. So we have + + - or - - - remaining
-        else:
-            if angle_changes[1]>0:
-                #it's ++-. Which means the moon is near a full moon phase. So we just work backwards from angles[2]
-                return "positive"
-            else:
-                #patently ---
-                return "negative"
-
- #Ensuring product is negative. So we must have + - or - +
-    else:
-        #Positive triple product implies + - - or - + -
-        #But - + - is not valid.
-        if (angle_changes[0]*angle_changes[1]*angle_changes[2])>0:
-            return "negative"
-
-        #Negative triple product implies -++ or +-+.
-        #Yet again, +-+ is not valid. So angles[2] must have been measured just after a new moon.
-        elif angle_changes[2] !=0:
-            return "positive"
-            
 
 
 

@@ -1,3 +1,4 @@
+#External Imports
 import sys
 import math
 from fractions import Fraction
@@ -6,14 +7,11 @@ import argparse
 # from collections import OrderedDict
 import ast
 
-
+#Project Imports
 from metonic import metonic_cycle_calc 
 from phase_calcs import *
 from grab_data import *
 
-
-#Synchronization is the acceptable error  (in Earth days)
-#num dates is the number of dates you want to find where the targeted planet-moon alignment repeats, either in the past or future. Arguments passed as [num_past dates,num_future_dates] 
 
 
 #PARSE ARGUMENTS
@@ -22,14 +20,12 @@ parser.add_argument("-n", "--moon_name", help="Name of the moon whose metonic cy
                     ly referred name e.g Ganymede and not J3 or Jupiter III. Full list of supported moons can be found in satellites.json. Use 'Moon' for Earth's moon.")
 
 parser.add_argument("-d", "--date", default=datetime.datetime.now(), help="target date from which similar metonic dates will be calculated.")
-parser.add_argument("-e", "--error",type=float, default=.5, help="margin of error(in decimal earth days) you want for the ratio between planet years and moon periods. This affects the type of \
-                    cycle generated and its accuracy. For example, the Earth-Moon system has a 8 moon metonic cyle called Octaeteris, the more accurate \
-                    and well known 19 year enneadecaeteris, and the even more accurate 76 year Callipic cycle.")
+parser.add_argument("-e", "--error",type=float, default=.5, help="        a decimal margin of error(in earth days) for the ratio between planet years and moon periods. This affects the type of cycle generated and its accuracy. For example, the Earth-Moon system has a 8 moon metonic cyle called Octaeteris, the more accurate and well known 19 year enneadecaeteris, and the even more accurate 76 year Callipic cycle. ")
 parser.add_argument("-nd", "--num_dates", default=[3,3], help="Inputted as [x,y] list. Give the x number of prior metonic dates and \
                     the y number of future metonic dates you need(program will return the x previous metonic dates and y next metonic dates relative to the target date).")
 
 
-parser.add_argument("-s", "--skip",default=False, help="skips printed text and inputs")
+parser.add_argument("-s", "--skip",default=False, help="An optional flag to skip printed text and inputs")
 
 
 #Alternative to required=True, allows user to provide moon name without having to rerun the program.
@@ -56,11 +52,14 @@ future dates of Easter--as the holiday has to occur on the Sunday that follows t
     iter_args = vars(args)
     arg_values = [getattr(args,arg) for arg in iter_args]
 
+    #Printing inputted Arguments
     print(f"Here are the argument inputs(defaults substituted in):")
     for idx, arg in enumerate(iter_args):
         print(f"{arg}: {arg_values[idx]}")
     cont_flag = input("\nIf you would like to change any of the arguments, press i. Press x to exit. Otherwise, press any other key to commence the calculation.\n")
 
+    #Zip arg keys and arg values to iterate over in the branching editing loop.
+    #lower() just in case input is capitalized
     arg_zip = zip(iter_args.keys(), arg_values)
     if cont_flag.lower()=="i":
 
@@ -99,13 +98,21 @@ num_dates = args.num_dates
 moon_name.capitalize
 if not isinstance(input_date, datetime.datetime):
     try:
-        input_date = datetime.strptime(input_date, '%m/%d/%y %H:%M:%S')
+        format_input_date = datetime.datetime.strptime(input_date, '%m-%d-%Y %H:%M:%S')
+        
+    #ValueError triggers if first pattern fails.
+    except ValueError:
+        try:
+           format_input_date = datetime.datetime.strptime(input_date, '%m/%d/%Y %H:%M:%S')
 
-    except:
-        raise Exception(f"Error processing input_date. Make sure it is in m/d/y H:M:S or m-d-y H:M:S format.")
-        exit()
+        except ValueError:
+            raise Exception(f"Error processing input_date. Make sure it is in m/d/y H:M:S or m-d-y H:M:S format.")
+        
+    input_date = format_input_date
+
 elif not isinstance(num_dates, list):
     try:
+        #Sometimes list input is not interpreted correctly. ast should turn the input into a list.
         num_dates = ast.literal_eval(num_dates)
         if len(num_dates) != 2:
             raise Exception(f"Error. num_dates must be a list with two elements, [x,y]. Use python input.py --help for more info. Make sure to include \
@@ -116,11 +123,6 @@ elif not isinstance(num_dates, list):
     except:
         raise Exception(f"Error. num_dates must be a list with two elements, [x,y]. Use python input.py --help for more info. Make sure to include \
                         the square brackets when inputting the list.")
-        exit()
-
-
-
-
 
 
 
@@ -136,26 +138,28 @@ phase_angles = [float(i) for i in ephem_data[1]]
 
 #Find nearest new_moon_time and find the moon phase of the selected date.
 new_moon_time = calc_phase_zero_point(time_data, phase_angles)
-print(f"\nThe nearest new moon date for {moon_name} is {new_moon_time}")
+print(f"\nThe nearest new moon date for{' the' if moon_name=='Moon' else ''} {moon_name} is {new_moon_time} UTC")
 
 moon_phase = calculate_moon_phase(input_date, moon_period, new_moon_time)
-
 
 
 #CALCULATE METONIC CYCLE AND FIND DATES
 #Actually calculate the metonic cycle, and then use the cycle to find other dates where the Sun-Planet-Moon configuration roughly repeats.
 (approx_planet_years, approx_moon_periods, error) = metonic_cycle_calc(synchronization_error, planetary_year, moon_period)
 
-def find_metonic_dates(target_date, cycle_length, num_dates):
-    #convert cycle length to seconds
-    cycle_length = cycle_length*24*3600
+def find_metonic_dates(target_date, num_periods, period_length, num_dates):
+    #convert cycle length to seconds. Remember moon period is in Earth days.
+    cycle_length = num_periods*period_length*24*3600
     #cycle_indices creates a list of cycle multiples to add or subtract from the target date.
     cycle_indices = list(range(-num_dates[0], 0)) + list(range(1, num_dates[1] + 1))
     cycle_dates = [target_date+datetime.timedelta(seconds=(index*cycle_length)) for index in cycle_indices]
     
     return cycle_dates
 
-metonic_dates = find_metonic_dates(input_date, approx_planet_years,num_dates)
+metonic_dates = find_metonic_dates(input_date, approx_moon_periods, moon_period, num_dates)
+
+#RETURN OUTPUT TO USER
+#Note: This is the best place to pass values from this program to another program if wanted.
 
 output_text = f"""
 Calculation finished. At {input_date}, {'the ' if moon_name=="Moon" else ''}{moon_name} will be in a {moon_phase} phase. 
@@ -167,7 +171,7 @@ You requested {num_dates[0]} prior metonic dates and {num_dates[1]} future meton
 print(output_text)
 for date in metonic_dates:
 
-    print(date)
+    print(date," UTC")
 
 
 

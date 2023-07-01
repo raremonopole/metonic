@@ -13,7 +13,7 @@ This calculator extends these metonic cycle calculations to most moons and their
 >pip install -r requirements.txt
 
 
-Astroquery, requests, and numpy are the 3 external packages needed for the program.
+Astroquery, requests, and numpy are the 3 external packages needed for the program. I do apologize for the large amounts of dependencies that astroquery requires.
 
 ## Running the program
 You can run the program with just
@@ -43,3 +43,23 @@ Details for these arguments are as follows:
                         Inputted as [x,y] list. Give the x number of prior metonic dates and the y number of future metonic dates you need(program will return the x previous metonic dates and y next metonic dates relative to the target date).
                         
  -s SKIP, --skip SKIP  skips printed text and inputs
+
+ ## Technical Details
+The program uses NASA's JPL Horizons API for ephemeris data for objects in the solar system.
+It grabs the period of the target moon and carries out a decimal expansion to approximate the ratio between the moon and the planet's periods.
+Once an acceptable fraction approximation within error bounds is found, the program is able to construct a metonic cycle for the moon and planet.
+
+Then, program grabs data for a "S-T-O" parameter that is roughly similar to a phase angle that the sun, planet, and moon make with each other.
+The program then selects data near the peak of the phase curve(near 180 degrees) and performs a scipy interpolation to determine the "new moon time" of the moon.
+On tests with Earth's Moon, the program can determine the new moon time to within 7 minutes of accuracy.
+In this way, the current moon phase on the target date and its repetitions in a metonic cycle can be determined.
+
+Lastly, the program calculates preceding and subsequent "metonic" dates using the metonic cycle.
+These are essentially dates where the Sun, Planet, and Moon positions within the Solar System will roughly repeat.
+
+Program Structure:
+Run input.py
+input.py -> grab_data.py (Make API Call, determine planet, determine moon period)
+input.py -> metonic.py (Calculate Metonic Cycle)
+input.py -> phase_calcs.py (Determine new moon time and phase at target date)
+input.py does final calculations and returns results.
