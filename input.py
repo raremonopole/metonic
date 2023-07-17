@@ -9,8 +9,8 @@ import ast
 
 #Project Imports
 from metonic import metonic_cycle_calc 
-from phase_calcs import *
-from grab_data import *
+from phase_calcs import calculate_moon_phase, calc_phase_zero_point
+from grab_data import grab_moon_info, make_horizons_call 
 
 
 
@@ -120,8 +120,7 @@ elif not isinstance(num_dates, list):
 
 
 
-    except:
-        raise Exception(f"Error. num_dates must be a list with two elements, [x,y]. Use python input.py --help for more info. Make sure to include \
+    except Exception(f"Error. num_dates must be a list with two elements, [x,y]. Use python input.py --help for more info. Make sure to include \
                         the square brackets when inputting the list.")
 
 
@@ -169,8 +168,8 @@ You requested {num_dates[0]} prior metonic dates and {num_dates[1]} future meton
 """
 
 print(output_text)
-for date in metonic_dates:
 
+for date in metonic_dates:
     print(date," UTC")
 
 
