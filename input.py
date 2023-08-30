@@ -56,6 +56,7 @@ future dates of Easter--as the holiday has to occur on the Sunday that follows t
     print(f"Here are the argument inputs(defaults substituted in):")
     for idx, arg in enumerate(iter_args):
         print(f"{arg}: {arg_values[idx]}")
+
     cont_flag = input("\nIf you would like to change any of the arguments, press i. Press x to exit. Otherwise, press any other key to commence the calculation.\n")
 
     #Zip arg keys and arg values to iterate over in the branching editing loop.
@@ -63,7 +64,7 @@ future dates of Easter--as the holiday has to occur on the Sunday that follows t
     arg_zip = zip(iter_args.keys(), arg_values)
     if cont_flag.lower()=="i":
 
-        for _,(arg, arg_val) in enumerate(arg_zip):
+        for _, (arg, arg_val) in enumerate(arg_zip):
 
             print(f"\n{arg_val} is the value of the {arg} argument.")
             cont_flag = input(f"*If you would like to change this argument, press y. Otherwise, press any key to skip.\n")
@@ -84,9 +85,7 @@ future dates of Easter--as the holiday has to occur on the Sunday that follows t
     elif cont_flag.lower()=="x":
         exit()
 
-
     print("Commencing calculation. Please wait a few moments as the API call and calculation can take some time. \n")
-
 
 
 moon_name = args.moon_name
@@ -95,7 +94,7 @@ synchronization_error = float(args.error)
 num_dates = args.num_dates
 
 #VALIDATE ARGUMENTS
-moon_name.capitalize
+moon_name.capitalize()
 if not isinstance(input_date, datetime.datetime):
     try:
         format_input_date = datetime.datetime.strptime(input_date, '%m-%d-%Y %H:%M:%S')

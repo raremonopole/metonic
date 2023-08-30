@@ -1,9 +1,9 @@
 # **Metonic Cycle Calculator**
 
 ## Introduction
-The metonic cycle, the enneadecaeteris, or the lunisolar cycle are all names for a natural cycle between the Earth and its moon that repeats every 19 years. This synchronization cycle and variations of it can predict the Moon's phase far in the future, and many ancient astronomers and mathematicians throughout history have spent much effort deriving them. The most famous use case for the metonic cycle is for the Computus--the algorithm that calculates future Easter dates(as the holiday must occur after a full moon phase). 
+The metonic cycle, the enneadecaeteris, or the lunisolar cycle are all names for a natural cycle between the Earth and its moon that repeats every 19 years. This synchronization cycle and variations of it can predict the Moon's phase far into the future, and many ancient astronomers and mathematicians throughout history have spent much effort deriving them. The most famous use case for the metonic cycle is for the Computus—the algorithm that calculates future Easter dates(as the holiday must occur after a full moon phase). 
 
-This calculator extends these metonic cycle calculations to most moons and their respective planets within the solar system. Given a synchronization error in days, the program will attempt a decimal expansion to calculate a ratio of planetary years to synodic moon periods with a smaller error. With this newfound metonic cycle, dates where  the sun, moon, and planet share the same relative configuration within the solar system can be calculated.
+This calculator extends these metonic cycle calculations to most moons and their respective planets within the solar system. Given a synchronization error in days, the program will attempt a decimal expansion to calculate a ratio of planetary years to synodic moon periods within a smaller error. With this newfound metonic cycle, dates where the Sun, moon, and planet share the same relative configuration within the solar system can be calculated.
 
 ## Installation instructions:
 >git clone https://github.com/arctangent4/metonic.git
@@ -45,7 +45,7 @@ Details for these arguments are as follows:
  -s SKIP, --skip  ~ skips printed text and inputs
 
  ## Technical Details
-The program uses NASA's JPL Horizons API for ephemeris data for objects in the solar system.
+The program uses NASA's JPL Horizons API to get ephemeris data for objects within the solar system.
 It grabs the period of the target moon and carries out a decimal expansion to approximate the ratio between the moon and the planet's periods.
 Once an acceptable fraction approximation within error bounds is found, the program is able to construct a metonic cycle for the moon and planet.
 
